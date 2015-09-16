@@ -94,15 +94,17 @@ GLint Uiforms[NumUniform];
     _program = program;
     
     glBindAttribLocation(program, vertexCoord, "vertexCoord");
-    glBindAttribLocation(program, textureCoord, "textureCoord");
-    
-    Uiforms[textureUniform] = glGetUniformLocation(program, "textureSam");
+//    glBindAttribLocation(program, textureCoord, "textureCoord");
+//    
+//    Uiforms[textureUniform] = glGetUniformLocation(program, "textureSam");
     
     glAttachShader(program, vertex);
     glAttachShader(program, fragment);
     
     [self linkProgram:program];
     [self validateProgram:program];
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+
 }
 
 - (BOOL)linkProgram:(GLuint)prog
@@ -183,19 +185,24 @@ GLint Uiforms[NumUniform];
 - (void)prepareData
 {
     GLfloat vertex[] = {
-      -0.5,0.5,0,-0.5,-0.5,-0,0.5,-0.5,0
+      -0.5f,0.5f,0.0f,-0.5f,-0.5f,-0.0f,0.5f,-0.5f,0.0f
     };
-//    GLuint vertexBuffer;
+    GLuint vertexBuffer;
 //    glGenBuffers(1, &vertexBuffer);
 //    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+//    glGenVertexArraysOES(1, &vertexBuffer);
+//    glBindVertexArrayOES(vertexBuffer);
+//    glBindBuffer(GL_ARRAY_BUFFER, vertexCoord);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glViewport(0, 0, 375, 667);
+    glUseProgram(_program);
 
-    glEnableVertexAttribArray(vertexCoord);
     glVertexAttribPointer(vertexCoord, 3, GL_FLOAT, GL_FALSE, 0, vertex);
-    
+    glEnableVertexAttribArray(vertexCoord);
     GLfloat texture[] = {
-        0,1,0,0,1,0
+        0.0f,1.0f,0.0f,0.0f,1.0f,0.0f
     };
-    
+    /*
     UIImage *image = [UIImage imageNamed:@"leaves.gif"];
     size_t width = CGImageGetWidth(image.CGImage);
     size_t height = CGImageGetHeight(image.CGImage);
@@ -208,11 +215,10 @@ GLint Uiforms[NumUniform];
     CGContextRelease(context);
     CFRelease(space);
     
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(1, 1, 1, 1);
-//    GLuint textureBuffer;
+    //    GLuint textureBuffer;
 //    glGenTextures(1, &textureBuffer);
 //    glBindTexture(GL_TEXTURE_2D, textureBuffer);
+//    glBindBuffer(GL_ARRAY_BUFFER, textureCoord);
     glEnableVertexAttribArray(textureCoord);
     glVertexAttribPointer(textureCoord, 2, GL_FLOAT, GL_FALSE, 0, texture);
     glActiveTexture(GL_TEXTURE0);
@@ -223,10 +229,9 @@ GLint Uiforms[NumUniform];
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
-    glUseProgram(_program);
     glUniform1i(Uiforms[textureUniform], 0);
     
-    
+    */
     glDrawArrays(GL_TRIANGLES, 0, 3);
     
     [_context presentRenderbuffer:_renderBuffer];
