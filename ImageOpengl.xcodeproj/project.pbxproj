@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D679BD2B1BAAC64200ECE621 /* paidashi.png in Resources */ = {isa = PBXBuildFile; fileRef = D679BD2A1BAAC64200ECE621 /* paidashi.png */; };
 		D6C417421BA900FC00F303C0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D6C417411BA900FC00F303C0 /* main.m */; };
 		D6C417451BA900FC00F303C0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D6C417441BA900FC00F303C0 /* AppDelegate.m */; };
 		D6C417481BA900FC00F303C0 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D6C417471BA900FC00F303C0 /* ViewController.m */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D679BD2A1BAAC64200ECE621 /* paidashi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = paidashi.png; sourceTree = "<group>"; };
 		D6C4173C1BA900FC00F303C0 /* ImageOpengl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageOpengl.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6C417401BA900FC00F303C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6C417411BA900FC00F303C0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 		D6C4173F1BA900FC00F303C0 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				D679BD2A1BAAC64200ECE621 /* paidashi.png */,
 				D6C417401BA900FC00F303C0 /* Info.plist */,
 				D6C4177B1BA9492D00F303C0 /* leaves.gif */,
 				D6C417411BA900FC00F303C0 /* main.m */,
@@ -250,6 +253,7 @@
 				D6C417661BA9012C00F303C0 /* shader.vsh in Resources */,
 				D6C417751BA908FA00F303C0 /* index.html in Resources */,
 				D6C417501BA900FC00F303C0 /* LaunchScreen.xib in Resources */,
+				D679BD2B1BAAC64200ECE621 /* paidashi.png in Resources */,
 				D6C4174D1BA900FC00F303C0 /* Images.xcassets in Resources */,
 				D6C4177C1BA9492D00F303C0 /* leaves.gif in Resources */,
 				D6C417771BA90DB900F303C0 /* index.js in Resources */,
@@ -474,6 +478,7 @@
 				D6C417611BA900FC00F303C0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D6C417621BA900FC00F303C0 /* Build configuration list for PBXNativeTarget "ImageOpenglTests" */ = {
 			isa = XCConfigurationList;
@@ -482,6 +487,7 @@
 				D6C417641BA900FC00F303C0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

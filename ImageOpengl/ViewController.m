@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import <OpenGLES/gltypes.h>
+#import <GLKit/GLKit.h>
 
 enum {
     vertexShader,
@@ -22,6 +23,7 @@ enum {
 
 enum {
     textureUniform,
+    transformUiform,
     NumUniform
 };
 
@@ -34,6 +36,9 @@ GLint Uiforms[NumUniform];
     GLuint _renderBuffer;
     GLint _program;
     EAGLContext *_context;
+    GLint _backWidth;
+    GLint _backHeight;
+    CADisplayLink *_link;
 }
 
 
@@ -44,6 +49,9 @@ GLint Uiforms[NumUniform];
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor purpleColor];
+    _link = [CADisplayLink displayLinkWithTarget:self selector:@selector(displaylinkCallBack:)];
+    [_link addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+    [_link setPaused:YES];
     [self setupGL];
     [self loadShaders];
     [self prepareData];
@@ -94,9 +102,10 @@ GLint Uiforms[NumUniform];
     _program = program;
     
     glBindAttribLocation(program, vertexCoord, "vertexCoord");
-//    glBindAttribLocation(program, textureCoord, "textureCoord");
-//    
-//    Uiforms[textureUniform] = glGetUniformLocation(program, "textureSam");
+    glBindAttribLocation(program, textureCoord, "textureCoord");
+//
+    Uiforms[textureUniform] = glGetUniformLocation(program, "textureSam");
+    Uiforms[transformUiform] = glGetUniformLocation(program, "transformMatrix");
     
     glAttachShader(program, vertex);
     glAttachShader(program, fragment);
@@ -175,17 +184,16 @@ GLint Uiforms[NumUniform];
         NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
     }
     
-    GLint width,height;
-    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &width);
-    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &height);
+    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &_backWidth);
+    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &_backHeight);
     
-    NSLog(@"width-%d height-%d--%@---%@",width,height,NSStringFromCGRect(self.view.layer.bounds),NSStringFromClass([self.view class]));
+    NSLog(@"width-%d height-%d--%@---%@",_backWidth,_backHeight,NSStringFromCGRect(self.view.layer.bounds),NSStringFromClass([self.view class]));
 }
 
 - (void)prepareData
 {
     GLfloat vertex[] = {
-      -0.5f,0.5f,0.0f,-0.5f,-0.5f,-0.0f,0.5f,-0.5f,0.0f
+      -0.5f,0.5f,0.0f,-0.5f,-0.5f,-0.0f,0.5f,-0.5f,0.0f,0.5f,0.5f,0.0f
     };
     GLuint vertexBuffer;
 //    glGenBuffers(1, &vertexBuffer);
@@ -194,16 +202,16 @@ GLint Uiforms[NumUniform];
 //    glBindVertexArrayOES(vertexBuffer);
 //    glBindBuffer(GL_ARRAY_BUFFER, vertexCoord);
     glClear(GL_COLOR_BUFFER_BIT);
-    glViewport(0, 0, 375, 667);
+    glViewport(0, 0, _backWidth, _backHeight);
     glUseProgram(_program);
 
     glVertexAttribPointer(vertexCoord, 3, GL_FLOAT, GL_FALSE, 0, vertex);
     glEnableVertexAttribArray(vertexCoord);
     GLfloat texture[] = {
-        0.0f,1.0f,0.0f,0.0f,1.0f,0.0f
+        0.0f,1.0f,0.0f,0.0f,1.0f,0.0f,1.0f,1.0f
     };
-    /*
-    UIImage *image = [UIImage imageNamed:@"leaves.gif"];
+    
+    UIImage *image = [UIImage imageNamed:@"paidashi"];
     size_t width = CGImageGetWidth(image.CGImage);
     size_t height = CGImageGetHeight(image.CGImage);
     
@@ -211,6 +219,9 @@ GLint Uiforms[NumUniform];
     CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
     
     CGContextRef context = CGBitmapContextCreate(bytes, width, height, 8, width * 4, space, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+    CGContextTranslateCTM (context, 0, height);
+    CGContextScaleCTM (context, 1.0, -1.0);
+    
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), image.CGImage);
     CGContextRelease(context);
     CFRelease(space);
@@ -222,7 +233,7 @@ GLint Uiforms[NumUniform];
     glEnableVertexAttribArray(textureCoord);
     glVertexAttribPointer(textureCoord, 2, GL_FLOAT, GL_FALSE, 0, texture);
     glActiveTexture(GL_TEXTURE0);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (int)width, (int)height, 0, GL_RGBA, 0, bytes);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (int)width, (int)height, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
     
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -230,14 +241,22 @@ GLint Uiforms[NumUniform];
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
     glUniform1i(Uiforms[textureUniform], 0);
+    glUniform1f(Uiforms[transformUiform], 0.4);
     
-    */
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     
     [_context presentRenderbuffer:_renderBuffer];
     
 }
 
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [_link setPaused:NO];
+}
 
+- (void)displaylinkCallBack:(CADisplayLink *)link
+{
+    [self prepareData];
+}
 
 @end
